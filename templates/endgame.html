@@ -1,0 +1,21 @@
+<div
+    style="display: flex;flex-direction: column; justify-content: center;align-items: center; width: 600px;height:500px; background-color: darkcyan;">
+    <div style="font-family: 'Lexend Deca',sans-serif; font-size: x-large; color: white; margin: 10px;">El puntaje
+        obtenido es:</div>
+    <div style="font-family: 'Lexend Deca',sans-serif; font-size: 60px; color: white; margin: 10px;">{{puntaje}}</div>
+    <button id="capturar" type="button" style="border: none;
+    border-radius: 3px;
+    font-size:xx-large;
+    font-weight: 700;
+    background-color: yellowgreen;
+    cursor: pointer; margin: 10px;" onclick="mainmenu();">Volver al menu inicio</button>
+</div>
+<script>
+    function mainmenu() {
+        const url = location.href;
+
+        // Reemplazar la URL actual con la URL de la página de inicio
+        location.replace(url);
+    }
+
+</script>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename='css/styles.css')}}">
+    <title>FigDraw</title>
+</head>
+
+<body>
+    <div class="main-container" id="game">
+        <div class="main-menu">
+            <h1 class="tittle">
+                FigDraw
+            </h1>
+            <p class="phrase">
+                ¡Demuestra tu destreza geométrica y suma puntos!
+            </p>
+            <div class="div-image">
+                <img class="start-image" src="/static/cerebro.png">
+
+            </div>
+            <div class="start-btn">
+                <button class="start-button" type="button" onclick="StartGame();">
+                    !JUGAR!
+                </button>
+            </div>
+        </div>
+        <script>
+            
+            function StartGame() {
+                fetch("/game")
+                    .then(response => response.text())
+                    .then(data => {
+                        const newDiv = document.createElement("div");
+                        newDiv.innerHTML = data;
+
+                        const scripts = newDiv.querySelectorAll("script");
+
+                        for (const script of scripts) {
+                            const newScript = document.createElement("script");
+                            newScript.textContent = script.textContent;
+
+                            newDiv.appendChild(newScript);
+                        }
+
+                        const oldDiv = document.getElementById("game");
+                        newDiv.id="gamen"
+                        oldDiv.parentNode.replaceChild(newDiv, oldDiv);
+                    })
+                    .catch(error => {
+                        console.error("Error al cargar el archivo: " + error);
+                    });
+            }
+        </script>
+    </div>
+</body>
+
+</html>

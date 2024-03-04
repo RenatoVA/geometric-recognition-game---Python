@@ -1,0 +1,140 @@
+<div
+    style="display: flex;flex-direction: column; justify-content: center;align-items: center; width: 600px;height:500px; background-color: darkcyan;">
+    <div
+        style="display: grid; grid-template-columns: 25% 55% 20%; width: 100%; justify-content: center; align-items: center;">
+        <div style="font-family: 'Lexend Deca',sans-serif; font-size: x-large; color: white; margin: 10px;">Puntaje:
+            <span id="puntaje"></span>
+        </div>
+        <div id="figuran"
+            style="display: flex; font-family: 'Lexend Deca',sans-serif; font-size: x-large; color: white; margin: 10px; justify-content: center;">
+            Dibuja un {{name}}</div>
+        <diV style="font-family: 'Lexend Deca',sans-serif; font-size: x-large; color: white; margin: 10px;"><span
+                id="numejercicio"></span> de 10
+        </diV>
+    </div>
+    <canvas id="canvas" width="400" height="400"
+        style="background-color: white;cursor: crosshair; width: 400px; height: 400px;"></canvas>
+    <div><button id="capturar" type="button" style="border: none;
+        border-radius: 3px;
+        font-size:xx-large;
+        font-weight: 700;
+        background-color: yellowgreen;
+        cursor: pointer; margin: 10px;">Siguente</button> <button type="button" style="border: none;
+        border-radius: 3px;
+        font-size:xx-large;
+        font-weight: 700;
+        background-color: yellowgreen;
+        cursor: pointer; margin: 10px;" onclick="borrarpizarra();">Borrar</button></div>
+
+</div>
+<script>
+    const mainCanvas = document.getElementById("canvas");
+    const context = mainCanvas.getContext("2d");
+    let initialX;
+    let initialY;
+    context.fillStyle = "white";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    const dibujar = (cursorX, cursorY) => {
+        context.beginPath();
+        context.moveTo(initialX, initialY);
+        context.lineWidth = 15;
+        context.strokeStyle = "#000";
+        context.lineCap = "round";
+        context.lineJoin = "round";
+        context.lineTo(cursorX, cursorY);
+        context.stroke();
+
+        initialX = cursorX;
+        initialY = cursorY;
+    };
+
+    const mouseDown = (evt) => {
+        initialX = evt.offsetX;
+        initialY = evt.offsetY;
+        dibujar(initialX, initialY);
+        mainCanvas.addEventListener("mousemove", mouseMoving);
+    };
+
+    const mouseMoving = (evt) => {
+        dibujar(evt.offsetX, evt.offsetY);
+    };
+
+    const mouseUp = () => {
+        mainCanvas.removeEventListener("mousemove", mouseMoving);
+    };
+
+    mainCanvas.addEventListener("mousedown", mouseDown);
+    mainCanvas.addEventListener("mouseup", mouseUp);
+    const capturarBoton = document.getElementById("capturar");
+    let cont = 1;
+    const numejer = document.getElementById("numejercicio");
+    numejer.innerHTML = cont;
+    var puntaje = 0;
+    const punt = document.getElementById("puntaje");
+    punt.innerHTML = puntaje;
+
+    capturarBoton.addEventListener("click", function () {
+        let imagenURL = mainCanvas.toDataURL("image/png");
+        let imagenBase64 = imagenURL.split(",")[1];
+
+        fetch("/api/predict", {
+            method: "POST",
+            body: imagenBase64,
+        })
+            .then((respuesta) => {
+                if (respuesta.ok) {
+                    return respuesta.json();
+                } else {
+                    console.log("Error al enviar la imagen");
+                }
+            })
+            .then(data => {
+                puntaje = parseInt(data[0]);
+                punt.innerHTML = puntaje;
+                const figura = document.getElementById("figuran");
+                figura.innerHTML = "Dibuja un " + data[1];
+                if (cont == 11) {
+                    endgame();
+                }
+
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+
+        borrarpizarra();
+        cont++;
+        numejer.innerHTML = cont;
+
+    });
+    function endgame() {
+        fetch("/endgame")
+            .then(response => response.text())
+            .then(data => {
+                const newDiv = document.createElement("div");
+                newDiv.innerHTML = data;
+
+                const scripts = newDiv.querySelectorAll("script");
+
+                for (const script of scripts) {
+                    const newScript = document.createElement("script");
+                    newScript.textContent = script.textContent;
+
+                    newDiv.appendChild(newScript);
+                }
+
+                const oldDiv = document.getElementById("gamen");
+                oldDiv.parentNode.replaceChild(newDiv, oldDiv);
+            })
+            .catch(error => {
+                console.error("Error al cargar el archivo: " + error);
+            });
+    }
+    function borrarpizarra() {
+        context.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+        context.fillStyle = "white";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+</script>

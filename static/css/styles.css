@@ -1,0 +1,54 @@
+body{
+    background-image: url("/static/fondo.jpg");
+    background-size: cover; 
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+}
+.main-container{
+    display: grid; 
+    justify-content: center;
+    background-color:darkcyan;
+    width: 400px;
+    height: 500px;
+}
+.main-menu{
+    display: flex;
+    flex-direction: column;
+}
+.tittle{
+    text-align:center ;
+    color: white;
+    font-family: 'Lexend Deca',sans-serif;
+    font-size: 45px;
+    
+}
+.phrase{
+    text-align:center ;
+    color: white;
+    font-family: 'Raleway',sans-serif;
+}
+.start-btn{
+    display: flex;
+justify-content: center;
+margin-top: 20px;
+}
+.start-button{
+border: none;
+border-radius: 3px;
+font-size:xx-large;
+font-weight: 700;
+background-color: yellowgreen;
+cursor: pointer;
+}
+.start-button:active{
+    background-color: white;
+}
+.div-image{
+    display: flex;
+    justify-content: center;
+}
+.start-image{
+max-width: 400px;
+height: 250px;
+}
